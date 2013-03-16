@@ -51,8 +51,7 @@ import org.jsoup.select.Elements;
  */
 public class CatalogDetail implements HttpRequestListener {
 
-	private static final String URL_HEAD = "https://selfservice.mypurdue.purdue.edu/prod/"
-			+ "bzwsrch.p_catalog_detail";
+	private static final String URL_HEAD = "https://selfservice.mypurdue.purdue.edu/prod/" + "bzwsrch.p_catalog_detail";
 
 	private Term term;
 	private Subject subject;
@@ -80,13 +79,11 @@ public class CatalogDetail implements HttpRequestListener {
 		this.requestFinished = true;
 	}
 
-	public void getResult(Subject subject, int cnbr)
-			throws RequestNotFinishedException {
+	public void getResult(Subject subject, int cnbr) throws RequestNotFinishedException {
 		getResult(Term.CURRENT, subject, cnbr);
 	}
 
-	public void getResult(Term term, Subject subject, int cnbr)
-			throws RequestNotFinishedException {
+	public void getResult(Term term, Subject subject, int cnbr) throws RequestNotFinishedException {
 		if (!this.requestFinished)
 			throw new RequestNotFinishedException();
 
@@ -165,19 +162,17 @@ public class CatalogDetail implements HttpRequestListener {
 		this.requestFinished = true;
 	}
 
-	private CatalogDetailEntry parseDocument(Document document)
-			throws HtmlParseException, CourseNotFoundException, IOException {
+	private CatalogDetailEntry parseDocument(Document document) throws HtmlParseException, CourseNotFoundException,
+			IOException {
 		CatalogDetailEntry entry = new CatalogDetailEntry(subject, cnbr);
-		Elements tableElements = document.getElementsByAttributeValue(
-				"summary",
+		Elements tableElements = document.getElementsByAttributeValue("summary",
 				"This table lists the course detail for the selected term.");
 		if (tableElements.isEmpty() != true) {
 			// get name
 			try {
 				Element body = tableElements.first().select("tbody").first();
 				String nameBlock = body.select("tr td.nttitle").first().text();
-				String[] temp = nameBlock.split(subject.name() + " "
-						+ String.valueOf(cnbr));
+				String[] temp = nameBlock.split(subject.name() + " " + String.valueOf(cnbr));
 				String name = temp[temp.length - 1].substring(3);
 				entry.setName(name);
 
@@ -206,8 +201,7 @@ public class CatalogDetail implements HttpRequestListener {
 				List<String> preq = new ArrayList<String>();
 				Elements parsing_A = body.select("a");
 				for (Element e : parsing_A) {
-					if (e.attr("href").contains("schd_in")
-							&& !(e.attr("href").contains("%"))) {
+					if (e.attr("href").contains("schd_in") && !(e.attr("href").contains("%"))) {
 
 						try {
 							types.add(Type.valueOf(e.text().replace(" ", "")));
@@ -240,8 +234,7 @@ public class CatalogDetail implements HttpRequestListener {
 				}
 
 				// get campus
-				begin = text
-						.indexOf("May be offered at any of the following campuses:");
+				begin = text.indexOf("May be offered at any of the following campuses:");
 				String campuses;
 				end = text.indexOf("Repeatable for Additional Credit:");
 				if (end < 0)
@@ -253,18 +246,13 @@ public class CatalogDetail implements HttpRequestListener {
 				if (end < 0)
 					end = text.indexOf("Prerequisites:");
 				if (end < 0) {
-					campuses = text
-							.substring(begin
-									+ "May be offered at any of the following campuses:"
-											.length() + 5);
+					campuses = text.substring(begin + "May be offered at any of the following campuses:".length() + 5);
 				} else {
-					campuses = text
-							.substring(
-									begin
-											+ "May be offered at any of the following campuses:"
-													.length() + 5, end - 1);
+					campuses = text.substring(begin + "May be offered at any of the following campuses:".length() + 5,
+							end - 1);
 				}
-				temp = campuses.replace("       ", "#").split("#");
+				String ttt=campuses.substring(0,7);
+				temp = campuses.replace(ttt, "#").split("#");
 				List<String> camps = new ArrayList<String>();
 				for (String s : temp) {
 					if (s.length() > 1) {
@@ -280,13 +268,9 @@ public class CatalogDetail implements HttpRequestListener {
 				if (end < 0)
 					end = text.indexOf("Prerequisites:");
 				if (begin > 0 && end < 0) {
-					entry.setRestrictions(text.substring(
-							begin + "Restrictions:".length()).replace(
-							"            ", "\n"));
+					entry.setRestrictions(text.substring(begin + "Restrictions:".length()).replace("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½", "\n"));
 				} else if (begin > 0) {
-					entry.setRestrictions(text.substring(
-							begin + "Restrictions:".length(), end).replace(
-							"            ", "\n"));
+					entry.setRestrictions(text.substring(begin + "Restrictions:".length(), end).replace("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½", "\n"));
 				}
 
 			} catch (StringIndexOutOfBoundsException e) {

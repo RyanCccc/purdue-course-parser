@@ -29,14 +29,15 @@ public class CatalogDetailTest {
 		// tmp_cnbr*=100;
 		// }
 		// final int cnbr=tmp_cnbr;
-		for (int mcnbr = 10000; mcnbr < 50000; mcnbr += 100) {
+		for (int mcnbr = 10000; mcnbr < 16000; mcnbr += 100) {
 			final int cnbr = mcnbr;
 			CatalogDetail detail = new CatalogDetail(
 					new CatalogDetailListener() {
 						@Override
 						public void onCatalogDetailFinished(
 								CatalogDetailEntry entry) {
-							System.out.println(entry.toString());
+							if(entry.getCampuses().contains("West Lafayette"))
+								System.out.println(entry.toString());
 							System.out.println("Course Found");
 							System.out.println("----------------------");
 						}
